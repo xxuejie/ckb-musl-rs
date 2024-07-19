@@ -70,6 +70,31 @@ macro_rules! use_brk_via_bss_value {
 }
 
 #[macro_export]
+macro_rules! malloc_as_alloc {
+    () => {
+        extern "C" {
+            fn malloc(size: core::ffi::c_long) -> *mut core::ffi::c_void;
+            fn free(ptr: *mut core::ffi::c_void);
+        }
+
+        struct MallocAllocator;
+
+        unsafe impl core::alloc::GlobalAlloc for MallocAllocator {
+            unsafe fn alloc(&self, layout: core::alloc::Layout) -> *mut u8 {
+                malloc(layout.size() as core::ffi::c_long) as *mut u8
+            }
+
+            unsafe fn dealloc(&self, ptr: *mut u8, _layout: core::alloc::Layout) {
+                free(ptr as *mut core::ffi::c_void)
+            }
+        }
+
+        #[global_allocator]
+        static ALLOC: MallocAllocator = MallocAllocator;
+    };
+}
+
+#[macro_export]
 macro_rules! disable_brk_and_mmap {
     () => {
         #[no_mangle]

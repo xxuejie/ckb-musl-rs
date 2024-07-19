@@ -36,5 +36,8 @@ pub fn program_entry() -> i8 {
     let s = if args.len() > 0 { &*args[0] } else { c"42" };
     unsafe { call_to_c(s.as_ptr()) };
 
+    let a = alloc::boxed::Box::new([0u8; 1024]);
+    ckb_std::debug!("Alloced memory from Rust: {:x}", a.as_ptr() as usize);
+
     0
 }
