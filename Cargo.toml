@@ -1,0 +1,20 @@
+[package]
+name = "ckb-musl-rs"
+version = "0.1.0"
+edition = "2021"
+include = [
+  "/src",
+  "/build.rs",
+  "/Cargo.lock",
+  "/deps/musl/release",
+  "/deps/builtins/build/libcompiler-rt.a"
+]
+links = "ckb-musl-rs"
+
+[features]
+default = ["link-against-builtins"]
+
+# When enabled, compiler builtins will also be linked
+link-against-builtins = []
+
+[dependencies]
